@@ -8,8 +8,8 @@ class DB
 {
     private $host = 'localhost';
     private $user = 'postgres';
-    private $pass = '';
-    private $dbname = 'dvdrental';
+    private $pass = '1234';
+    private $dbname = 'wotroticket';
 
     public function connect()
     {

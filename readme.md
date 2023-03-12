@@ -36,3 +36,10 @@ class DB
 }
 
 </code
+
+
+# Pour demarrer le server
+# executer cette commande ou la deuxieme
+ php -S localhost:8888 -t public
+
+ sh server.sh
