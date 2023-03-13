@@ -51,6 +51,71 @@ $app->get('/client/list', function (Request $request, Response $response) {
     }
    });
    
+// LA LISTE DES CLIENTS PAR TRAJETS ORDONNE PAR TRAJET.DATE
+$app->get('/client/listpartrajet', function (Request $request, Response $response) {
+  $sql = "SELECT client.id_client,client.nom,client.prenom,client.datnais,client.adresse,client.telephone,client.email,client.adresse,
+                 trajet.id_trajet,trajet.date
+          FROM client
+          JOIN ticket ON client.id_client=ticket.id_client
+          JOIN trajet ON ticket.id_trajet=trajet.id_trajet
+          WHERE trajet.id_trajet=4
+          ORDER BY trajet.date";
+
+  try {
+    $db = new Db();
+    $conn = $db->connect();
+    $stmt = $conn->query($sql);
+    $customers = $stmt->fetchAll(PDO::FETCH_OBJ);
+    $db = null;
+   
+    $response->getBody()->write(json_encode($customers));
+    return $response
+      ->withHeader('content-type', 'application/json')
+      ->withStatus(200);
+  } catch (PDOException $e) {
+    $error = array(
+      "message" => $e->getMessage()
+    );
+ 
+    $response->getBody()->write(json_encode($error));
+    return $response
+      ->withHeader('content-type', 'application/json')
+      ->withStatus(500);
+  }
+ });
+
+// LA LISTTE DES CLIENTS PAR TRAJET ET SELON LE TYP_VOYAGE
+ $app->get('/client/listpartrajet/selonvoyage', function (Request $request, Response $response) {
+  $sql = "SELECT client.id_client,client.nom,client.prenom,client.datnais,client.adresse,client.telephone,client.email,
+                 client.adresse,trajet.id_trajet,trajet.typ_voyage
+          FROM client,trajet
+          WHERE trajet.typ_voyage='aller'";
+
+  try {
+    $db = new Db();
+    $conn = $db->connect();
+    $stmt = $conn->query($sql);
+    $customers = $stmt->fetchAll(PDO::FETCH_OBJ);
+    $db = null;
+   
+    $response->getBody()->write(json_encode($customers));
+    return $response
+      ->withHeader('content-type', 'application/json')
+      ->withStatus(200);
+  } catch (PDOException $e) {
+    $error = array(
+      "message" => $e->getMessage()
+    );
+ 
+    $response->getBody()->write(json_encode($error));
+    return $response
+      ->withHeader('content-type', 'application/json')
+      ->withStatus(500);
+  }
+ });
+ 
+
+
 // AJOUTER UN NOUVEAU CLIENT
 $app->post('/client/add', function (Request $request, Response $response, array $args) {
    
@@ -79,6 +144,7 @@ $app->post('/client/add', function (Request $request, Response $response, array 
       $stmt->bindParam(':telephone', $telephone);
       $stmt->bindParam(':datnais', $datnais);
       $stmt->bindParam(':adresse', $adresse);
+      
       $result = $stmt->execute();
    
       $msg = [
@@ -474,11 +540,11 @@ $app->delete('/gestionnaire/delete/{id_gest}', function (Request $request, Respo
 {
 $id = $request->getAttribute('id_user');
 $data = json_decode($request->getBody()->getContents(), true);
-$name = $data["nom"];
+$nom = $data["nom"];
+$prenom = $data["prenom"];
 $email = $data["email"];
 $telephone = $data["telephone"];
 $adresse = $data["adresse"];
-$prenom = $data["prenom"];
 $datnais = $data["datnais"];
 
 
@@ -752,6 +818,39 @@ $app->delete('/ville/delete/{id_ville}', function (Request $request, Response $r
   }
  }); 
 
+ //LA LISTE DES COMPAGNIES PAR VILLES
+ $app->get('/compagnie/listparville', function (Request $request, Response $response) {
+  $sql = "SELECT compagnie.id_compagny,compagnie.nom,compagnie.adresse,compagnie.telephone,compagnie.email,
+                 ville.id_ville,ville.nom
+          FROM compagnie
+          JOIN gare ON compagnie.id_compagny=gare.id_compagny
+          JOIN ville ON gare.id_ville=ville.id_ville
+          WHERE ville.nom='abidjan'";
+ 
+  try {
+    $db = new Db();
+    $conn = $db->connect();
+    $stmt = $conn->query($sql);
+    $customers = $stmt->fetchAll(PDO::FETCH_OBJ);
+    $db = null;
+   
+    $response->getBody()->write(json_encode($customers));
+    return $response
+      ->withHeader('content-type', 'application/json')
+      ->withStatus(200);
+  } catch (PDOException $e) {
+    $error = array(
+      "message" => $e->getMessage()
+    );
+ 
+    $response->getBody()->write(json_encode($error));
+    return $response
+      ->withHeader('content-type', 'application/json')
+      ->withStatus(500);
+  }
+ }); 
+
+
  // AJOUTER UNE COMPAGNIE
  $app->post('/compagnie/add', function (Request $request, Response $response, array $args) {
    
@@ -927,7 +1026,37 @@ $app->get('/gare/list', function (Request $request, Response $response) {
       ->withHeader('content-type', 'application/json')
       ->withStatus(500);
   }
- }); 
+ });
+
+// LA LISTE DES GARES PAR VILLE
+ $app->get('/gare/listparville', function (Request $request, Response $response) {
+  $sql = "SELECT gare.id_gare,gare.nom,ville.nom
+          FROM gare,ville
+          WHERE ville.nom='abidjan'";
+ 
+  try {
+    $db = new Db();
+    $conn = $db->connect();
+    $stmt = $conn->query($sql);
+    $customers = $stmt->fetchAll(PDO::FETCH_OBJ);
+    $db = null;
+   
+    $response->getBody()->write(json_encode($customers));
+    return $response
+      ->withHeader('content-type', 'application/json')
+      ->withStatus(200);
+  } catch (PDOException $e) {
+    $error = array(
+      "message" => $e->getMessage()
+    );
+ 
+    $response->getBody()->write(json_encode($error));
+    return $response
+      ->withHeader('content-type', 'application/json')
+      ->withStatus(500);
+  }
+ });
+
 
  // AJOUTER UNE GARE
  $app->post('/gare/add', function (Request $request, Response $response, array $args) {
@@ -940,7 +1069,7 @@ $app->get('/gare/list', function (Request $request, Response $response) {
   
   // requete pour inserer les éléments du formulaire dans la base de donnée 
  
-  $sql = "INSERT INTO gare(nom,id_compagny, id_ville)  VALUES (:nom,:id_compagny,:id_ville)";
+  $sql = "INSERT INTO gare(nom,id_compagny,id_ville)  VALUES(:nom,:id_compagny,:id_ville)";
  
   try {
     $db = new Db();
@@ -983,16 +1112,16 @@ $app->put('/gare/update/{id_gare}',
 $id = $request->getAttribute('id_gare');
 $data = json_decode($request->getBody()->getContents(), true);
 $nom = $data["nom"];
-$email = $data["id_ville"];
-$adresse = $data["id_compagny"];
+$id_compagny = $data["id_compagny"];
+$id_ville = $data["id_ville"];
 
 
 
 $sql = "UPDATE gare SET
-         nom = :nom,
-         id_compagny = :id_compagny,
-         id_ville = :id_ville
-WHERE id_gare = $id";
+         nom:nom,
+         id_compagny=:id_compagny,
+         id_ville=:id_ville
+WHERE id_gare=$id";
  
 
 try {
@@ -1065,7 +1194,7 @@ $app->delete('/gare/delete/{id_gare}', function (Request $request, Response $res
       ->withStatus(500);
   }
  });
-//**************************** GESTION DES GARES ******************************************* */
+//**************************** FIN API GARES ******************************************* */
 
 
 
@@ -1076,7 +1205,12 @@ $app->delete('/gare/delete/{id_gare}', function (Request $request, Response $res
 
 // LISTES DES CARS
 $app->get('/car/list', function (Request $request, Response $response) {
-  $sql = "SELECT * FROM car";
+  $sql = "SELECT car.num_car,car.typ_car,compagnie.nom
+          FROM car 
+          JOIN place ON car.num_car=place.num_car
+          JOIN trajet ON place.id_trajet=trajet.id_trajet
+          JOIN compagnie ON compagnie.id_compagny=car.id_compagny
+          WHERE trajet.id_trajet > 1 AND compagnie.nom='avs';";
  
   try {
     $db = new Db();
@@ -1101,6 +1235,38 @@ $app->get('/car/list', function (Request $request, Response $response) {
   }
  }); 
 
+ //LISTE DES CARS QUI ONT EFFECTUE AU MOINS UN TRAJET POUR CHAQUE COMPAGNIE
+ $app->get('/car/listcarparcompagnie', function (Request $request, Response $response) {
+  $sql = "SELECT car.num_car,car.typ_car,compagnie.nom
+          FROM car 
+          JOIN place ON car.num_car=place.num_car
+          JOIN trajet ON place.id_trajet=trajet.id_trajet
+          JOIN compagnie ON compagnie.id_compagny=car.id_compagny
+          WHERE trajet.id_trajet > 1 AND compagnie.nom='avs';";
+ 
+  try {
+    $db = new Db();
+    $conn = $db->connect();
+    $stmt = $conn->query($sql);
+    $customers = $stmt->fetchAll(PDO::FETCH_OBJ);
+    $db = null;
+   
+    $response->getBody()->write(json_encode($customers));
+    return $response
+      ->withHeader('content-type', 'application/json')
+      ->withStatus(200);
+  } catch (PDOException $e) {
+    $error = array(
+      "message" => $e->getMessage()
+    );
+ 
+    $response->getBody()->write(json_encode($error));
+    return $response
+      ->withHeader('content-type', 'application/json')
+      ->withStatus(500);
+  }
+ });
+
  // AJOUTER UNE CAR
  $app->post('/car/add', function (Request $request, Response $response, array $args) {
    
@@ -1108,7 +1274,7 @@ $app->get('/car/list', function (Request $request, Response $response) {
   $data = json_decode($request->getBody()->getContents(), true); // Permet de récuperer le contenu envoye par la car
   
   $id_compagny = $data["id_compagny"];
-  $id_car = $data["typ_car"];
+  $typ_car = $data["typ_car"];
   
   // requete pour inserer les éléments du formulaire dans la base de donnée 
  
@@ -1153,15 +1319,15 @@ $app->put('/car/update/{num_car}',
 {
 $id = $request->getAttribute('num_car');
 $data = json_decode($request->getBody()->getContents(), true);
-$nom = $data["id_compagny"];
-$email = $data["typ_car"];
+$typ_car = $data["typ_car"];
+$id_compagny = $data["id_compagny"];
 
 
 
-$sql = "UPDATE compagnie SET
-         typ_compagny = :typ_compagny,
-         typ_car = :typ_car,
-WHERE id_car = $id";
+$sql = "UPDATE car SET
+         typ_car=:typ_car,
+         id_compagny=:id_compagny
+WHERE num_car = $id";
  
 
 try {
@@ -1234,7 +1400,7 @@ $app->delete('/car/delete/{num_car}', function (Request $request, Response $resp
   }
  });
 
-/******************************************** FIN  DES CARS ****************************************************/
+/******************************************** FIN API CARS ****************************************************/
 
 
 /****************************************************************************************************************
@@ -1270,6 +1436,39 @@ $app->get('/place/list', function (Request $request, Response $response) {
   }
  }); 
 
+//  LA LISTE DES PLACES DISPONIBLES POUR UN TRAJET PAR COMPAGNIE
+ $app->get('/place/listplacepartrajet', function (Request $request, Response $response) {
+  $sql = "SELECT DISTINCT place.num_place,place.ranger,place.nbre_place,trajet.id_trajet
+          FROM place
+          JOIN trajet ON place.id_trajet=trajet.id_trajet
+          JOIN gare On trajet.id_gare=gare.id_gare
+          JOIN compagnie ON gare.id_compagny=compagnie.id_compagny
+          WHERE trajet.typ_voyage='allerretour' 
+          AND compagnie.nom='utb'";
+ 
+  try {
+    $db = new Db();
+    $conn = $db->connect();
+    $stmt = $conn->query($sql);
+    $customers = $stmt->fetchAll(PDO::FETCH_OBJ);
+    $db = null;
+   
+    $response->getBody()->write(json_encode($customers));
+    return $response
+      ->withHeader('content-type', 'application/json')
+      ->withStatus(200);
+  } catch (PDOException $e) {
+    $error = array(
+      "message" => $e->getMessage()
+    );
+ 
+    $response->getBody()->write(json_encode($error));
+    return $response
+      ->withHeader('content-type', 'application/json')
+      ->withStatus(500);
+  }
+ }); 
+
  // AJOUTER UNE PLACE
  $app->post('/place/add', function (Request $request, Response $response, array $args) {
    
@@ -1279,12 +1478,12 @@ $app->get('/place/list', function (Request $request, Response $response) {
   $nbre_place = $data["nbre_place"];
   $id_trajet = $data["id_trajet"];
   $ranger = $data["ranger"];
-  $ranger = $data["num_car"];
+  $num_car = $data["num_car"];
 
   
   // requete pour inserer les éléments du formulaire dans la base de donnée 
  
-  $sql = "INSERT INTO place(ranger,nbre_place,id_trajet,num_car)  VALUES (:ranger,:nbre_place,:nbre_trajet,:num_car)";
+  $sql = "INSERT INTO place(ranger,nbre_place,id_trajet,num_car)  VALUES (:ranger,:nbre_place,:id_trajet,:num_car)";
  
   try {
     $db = new Db();
@@ -1293,8 +1492,8 @@ $app->get('/place/list', function (Request $request, Response $response) {
     $stmt = $conn->prepare($sql);
     $stmt->bindParam(':ranger', $ranger);
     $stmt->bindParam(':nbre_place', $nbre_place);
+    $stmt->bindParam(':id_trajet', $id_trajet);
     $stmt->bindParam(':num_car', $num_car);
-    $stmt->bindParam(':trajet', $id_trajet);
 
     $result = $stmt->execute();
  
@@ -1323,7 +1522,7 @@ $app->get('/place/list', function (Request $request, Response $response) {
 
 // MODIFIER UNE PLACE
 $app->put('/place/update/{num_place}',
-  function (Request $request, Response $response, array $args) 
+  function (Request $request, Response $response) 
 {
 $id = $request->getAttribute('num_place');
 $data = json_decode($request->getBody()->getContents(), true);
@@ -1378,7 +1577,7 @@ echo "Update successful! ";
 });
 
 // SUPPRIMER UN CAR
-$app->delete('/place/delete/{id_car}', function (Request $request, Response $response, array $args) {
+$app->delete('/place/delete/{num_place}', function (Request $request, Response $response, array $args) {
   $id = $args["num_place"];
   $sql = "DELETE FROM place WHERE num_place = $id";
  
@@ -1410,7 +1609,7 @@ $app->delete('/place/delete/{id_car}', function (Request $request, Response $res
       ->withStatus(500);
   }
  });
- /*****************************************FIN PLACES ********************************************************/
+ /*****************************************FIN API PLACES ********************************************************/
 
 
 
@@ -1494,12 +1693,12 @@ $app->get('/ticket/list', function (Request $request, Response $response) {
 
 
 // MODIFIER UN TICKET
-$app->put('/ticket/update/{num_place}',
+$app->put('/ticket/update/{id_ticket}',
   function (Request $request, Response $response, array $args) 
 {
 $id = $request->getAttribute('id_ticket');
 $data = json_decode($request->getBody()->getContents(), true);
-$ranger = $data["prix_total"];
+$prix_total = $data["prix_total"];
 $id_client = $data["id_client"];
 $id_trajet = $data["id_trajet"];
 
@@ -1580,7 +1779,7 @@ $app->delete('/ticket/delete/{id_ticket}', function (Request $request, Response 
   }
  });
  
- /*********************************************FIN TICKETS ***************************************************/
+ /*********************************************FIN API TICKETS ***************************************************/
   
 
  
@@ -1614,6 +1813,41 @@ $app->get('/trajet/list', function (Request $request, Response $response) {
       ->withStatus(500);
   }
  }); 
+
+//  LISTE DES TRAJETS PAR COMPAGNIE ET ORDONNEE PAR ORDRE D HEURE DE DEPART
+$app->get('/trajet/listparcompagnie', function (Request $request, Response $response) {
+  $sql = "SELECT trajet.id_trajet,trajet.prix,trajet.date,trajet.depart,trajet.typ_voyage,trajet.duree,
+                 trajet.destination,trajet.heuredepart,trajet.heurearrive,trajet.destination,
+                 trajet.id_gare,compagnie.nom,ville.nom
+          FROM trajet 
+          join gare ON trajet.id_gare=gare.id_gare
+          join ville ON gare.id_ville=ville.id_ville
+          join compagnie ON gare.id_compagny=compagnie.id_compagny
+          WHERE compagnie.nom=':compagnie.nom'
+          ORDER BY trajet.heuredepart";
+ 
+  try {
+    $db = new Db();
+    $conn = $db->connect();
+    $stmt = $conn->query($sql);
+    $customers = $stmt->fetchAll(PDO::FETCH_OBJ);
+    $db = null;
+   
+    $response->getBody()->write(json_encode($customers));
+    return $response
+      ->withHeader('content-type', 'application/json')
+      ->withStatus(200);
+  } catch (PDOException $e) {
+    $error = array(
+      "message" => $e->getMessage()
+    );
+ 
+    $response->getBody()->write(json_encode($error));
+    return $response
+      ->withHeader('content-type', 'application/json')
+      ->withStatus(500);
+  }
+ });
 
  // AJOUTER UN TRAJET
  $app->post('/trajet/add', function (Request $request, Response $response, array $args) {
@@ -1780,6 +2014,6 @@ $app->delete('/trajet/delete/{id_trajet}', function (Request $request, Response 
   }
  });
 
- /***************************************************** FIN TRAJETS *******************************************/
+ /***************************************************** FIN API TRAJETS *******************************************/
 $app->run();
 //$app->get('/gare/listparville/{nomville}', function (Request $request, Response $response, array $args)
