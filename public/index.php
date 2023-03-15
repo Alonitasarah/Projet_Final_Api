@@ -1792,42 +1792,42 @@ $app->get('/trajet/list', function (Request $request, Response $response) {
  }); 
 
 //  LISTE DES TRAJETS PAR COMPAGNIE ET ORDONNEE PAR ORDRE D HEURE DE DEPART
-$app->get('/trajet/listparcompagnie/{idcompagnie}', function (Request $request, Response $response) {
+// $app->get('/trajet/listparcompagnie/{idcompagnie}', function (Request $request, Response $response) {
    
-   $idcompagnie = $request->getAttribute('idcompagnie');
+//    $idcompagnie = $request->getAttribute('idcompagnie');
    
-  $sql = "SELECT trajet.id_trajet,trajet.prix,trajet.date,trajet.depart,trajet.typ_voyage,trajet.duree,
-                 trajet.destination,trajet.heuredepart,trajet.heurearrive,trajet.destination,
-                 trajet.id_gare,compagnie.nom,ville.nom
-          FROM trajet 
-          join gare ON trajet.id_gare = gare.id_gare
-          join ville ON gare.id_ville = ville.id_ville
-          join compagnie ON gare.id_compagny = compagnie.id_compagny
-          WHERE compagnie.id_compagny = $idcompagnie
-          ORDER BY trajet.heuredepart";
+//   $sql = "SELECT trajet.id_trajet,trajet.prix,trajet.date,trajet.depart,trajet.typ_voyage,trajet.duree,
+//                  trajet.destination,trajet.heuredepart,trajet.heurearrive,trajet.destination,
+//                  trajet.id_gare,compagnie.nom,ville.nom
+//           FROM trajet 
+//           join gare ON trajet.id_gare = gare.id_gare
+//           join ville ON gare.id_ville = ville.id_ville
+//           join compagnie ON gare.id_compagny = compagnie.id_compagny
+//           WHERE compagnie.id_compagny = $idcompagnie
+//           ORDER BY trajet.heuredepart";
  
-  try {
-    $db = new Db();
-    $conn = $db->connect();
-    $stmt = $conn->query($sql);
-    $customers = $stmt->fetchAll(PDO::FETCH_OBJ);
-    $db = null;
+//   try {
+//     $db = new Db();
+//     $conn = $db->connect();
+//     $stmt = $conn->query($sql);
+//     $customers = $stmt->fetchAll(PDO::FETCH_OBJ);
+//     $db = null;
    
-    $response->getBody()->write(json_encode($customers));
-    return $response
-      ->withHeader('content-type', 'application/json')
-      ->withStatus(200);
-  } catch (PDOException $e) {
-    $error = array(
-      "message" => $e->getMessage()
-    );
+//     $response->getBody()->write(json_encode($customers));
+//     return $response
+//       ->withHeader('content-type', 'application/json')
+//       ->withStatus(200);
+//   } catch (PDOException $e) {
+//     $error = array(
+//       "message" => $e->getMessage()
+//     );
  
-    $response->getBody()->write(json_encode($error));
-    return $response
-      ->withHeader('content-type', 'application/json')
-      ->withStatus(500);
-  }
- });
+//     $response->getBody()->write(json_encode($error));
+//     return $response
+//       ->withHeader('content-type', 'application/json')
+//       ->withStatus(500);
+//   }
+//  });
 
  // AJOUTER UN TRAJET
  $app->post('/trajet/add', function (Request $request, Response $response, array $args) {
