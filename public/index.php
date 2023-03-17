@@ -9,7 +9,7 @@ header('Access-Control-Allow-Origin: *');
 
 header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
 
-header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
+header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With'); 
 
 require_once __DIR__ . '/../vendor/autoload.php';
 $app = AppFactory::create();
@@ -258,179 +258,179 @@ $app->delete('/client/delete/{id_client}', function (Request $request, Response 
  **************************************************************************************************************/
 
  // LISTES DES GESTIONNAIRES 
- $app->get('/gestionnaire/list', function (Request $request, Response $response) {
-  $sql = "SELECT * FROM gestionnaire";
+//  $app->get('/gestionnaire/list', function (Request $request, Response $response) {
+//   $sql = "SELECT * FROM gestionnaire";
  
-  try {
-    $db = new Db();
-    $conn = $db->connect();
-    $stmt = $conn->query($sql);
-    $customers = $stmt->fetchAll(PDO::FETCH_OBJ);
-    $db = null;
+//   try {
+//     $db = new Db();
+//     $conn = $db->connect();
+//     $stmt = $conn->query($sql);
+//     $customers = $stmt->fetchAll(PDO::FETCH_OBJ);
+//     $db = null;
    
-    $response->getBody()->write(json_encode($customers));
-    return $response
-      ->withHeader('content-type', 'application/json')
-      ->withStatus(200);
-  } catch (PDOException $e) {
-    $error = array(
-      "message" => $e->getMessage()
-    );
+//     $response->getBody()->write(json_encode($customers));
+//     return $response
+//       ->withHeader('content-type', 'application/json')
+//       ->withStatus(200);
+//   } catch (PDOException $e) {
+//     $error = array(
+//       "message" => $e->getMessage()
+//     );
  
-    $response->getBody()->write(json_encode($error));
-    return $response
-      ->withHeader('content-type', 'application/json')
-      ->withStatus(500);
-  }
- }); 
+//     $response->getBody()->write(json_encode($error));
+//     return $response
+//       ->withHeader('content-type', 'application/json')
+//       ->withStatus(500);
+//   }
+//  }); 
 
  // AJOUTER UN GESTIONNAIRE
- $app->post('/gestionnaire/add', function (Request $request, Response $response, array $args) {
+//  $app->post('/gestionnaire/add', function (Request $request, Response $response, array $args) {
    
   //$data = $request->getParsedBody(); 
-  $data = json_decode($request->getBody()->getContents(), true); // Permet de récuperer le contenu envoye par le gestionnaire
+  // $data = json_decode($request->getBody()->getContents(), true); // Permet de récuperer le contenu envoye par le gestionnaire
   
-  $nom = $data["nom"]; // permet de récuperer le nom
-  $prenom = $data["prenom"];  // permet de récuperer le prenom
-  $datnais = $data["datnais"];  // permet de récuperer la date de naissance
-  $adresse = $data["adresse"];   // permet de récuperer l'adresse
-  $email = $data["email"];  // permet de récuperer l'email
-  $telephone = $data["telephone"];  // permet de récuperer le téléphone
+  // $nom = $data["nom"]; // permet de récuperer le nom
+  // $prenom = $data["prenom"];  // permet de récuperer le prenom
+  // $datnais = $data["datnais"];  // permet de récuperer la date de naissance
+  // $adresse = $data["adresse"];   // permet de récuperer l'adresse
+  // $email = $data["email"];  // permet de récuperer l'email
+  // $telephone = $data["telephone"];  // permet de récuperer le téléphone
 
   // requete pour inserer les éléments du formulaire dans la base de donnée 
  
-  $sql = "INSERT INTO gestionnaire(nom, prenom, datnais, email, adresse, telephone)  VALUES (:nom, :prenom, :datnais, :email, :telephone, :adresse)";
+//   $sql = "INSERT INTO gestionnaire(nom, prenom, datnais, email, adresse, telephone)  VALUES (:nom, :prenom, :datnais, :email, :telephone, :adresse)";
  
-  try {
-    $db = new Db();
-    $conn = $db->connect();
+//   try {
+//     $db = new Db();
+//     $conn = $db->connect();
    
-    $stmt = $conn->prepare($sql);
-    $stmt->bindParam(':nom', $nom);
-    $stmt->bindParam(':prenom', $prenom);
-    $stmt->bindParam(':email', $email);
-    $stmt->bindParam(':telephone', $telephone);
-    $stmt->bindParam(':datnais', $datnais);
-    $stmt->bindParam(':adresse', $adresse);
-    $result = $stmt->execute();
+//     $stmt = $conn->prepare($sql);
+//     $stmt->bindParam(':nom', $nom);
+//     $stmt->bindParam(':prenom', $prenom);
+//     $stmt->bindParam(':email', $email);
+//     $stmt->bindParam(':telephone', $telephone);
+//     $stmt->bindParam(':datnais', $datnais);
+//     $stmt->bindParam(':adresse', $adresse);
+//     $result = $stmt->execute();
  
-    $msg = [
-      "message" => "Enregistrement reussi",
-      "status" => 200 
-    ];
+//     $msg = [
+//       "message" => "Enregistrement reussi",
+//       "status" => 200 
+//     ];
 
-    $db = null;
-    $response->getBody()->write(json_encode($msg));
-    return $response
-      ->withHeader('content-type', 'application/json')
-      ->withStatus(200);
-  } catch (PDOException $e) {
-    $error = array(
-      "message" => $e->getMessage()
-    );
+//     $db = null;
+//     $response->getBody()->write(json_encode($msg));
+//     return $response
+//       ->withHeader('content-type', 'application/json')
+//       ->withStatus(200);
+//   } catch (PDOException $e) {
+//     $error = array(
+//       "message" => $e->getMessage()
+//     );
  
-    $response->getBody()->write(json_encode($error));
-    return $response
-      ->withHeader('content-type', 'application/json')
-      ->withStatus(500);
-  }
- });
+//     $response->getBody()->write(json_encode($error));
+//     return $response
+//       ->withHeader('content-type', 'application/json')
+//       ->withStatus(500);
+//   }
+//  });
 
  // MODIFIER UN GESTIONNAIRE
- $app->put('/gestionnaire/update/{id_gest}',
-  function (Request $request, Response $response, array $args) 
-{
-$id = $request->getAttribute('id_gest');
-$data = json_decode($request->getBody()->getContents(), true);
-$nom = $data["nom"];
-$email = $data["email"];
-$telephone = $data["telephone"];
-$adresse = $data["adresse"];
-$prenom = $data["prenom"];
-$datnais = $data["datnais"];
+//  $app->put('/gestionnaire/update/{id_gest}',
+//   function (Request $request, Response $response, array $args) 
+// {
+// $id = $request->getAttribute('id_gest');
+// $data = json_decode($request->getBody()->getContents(), true);
+// $nom = $data["nom"];
+// $email = $data["email"];
+// $telephone = $data["telephone"];
+// $adresse = $data["adresse"];
+// $prenom = $data["prenom"];
+// $datnais = $data["datnais"];
 
 
-$sql = "UPDATE gestionnaire SET
-         nom = :nom,
-         email = :email,
-         telephone = :telephone,
-         adresse = :adresse,
-         prenom = :prenom,
-         datnais = :datnais
-WHERE id_gest = $id";
+// $sql = "UPDATE gestionnaire SET
+//          nom = :nom,
+//          email = :email,
+//          telephone = :telephone,
+//          adresse = :adresse,
+//          prenom = :prenom,
+//          datnais = :datnais
+// WHERE id_gest = $id";
 
-try {
- $db = new Db();
- $conn = $db->connect();
+// try {
+//  $db = new Db();
+//  $conn = $db->connect();
 
- $stmt = $conn->prepare($sql);
- $stmt->bindParam(':nom', $nom);
- $stmt->bindParam(':email', $email);
- $stmt->bindParam(':telephone', $telephone);
- $stmt->bindParam(':adresse', $adresse);
- $stmt->bindParam(':prenom', $prenom);
- $stmt->bindParam(':datnais', $datnais);
+//  $stmt = $conn->prepare($sql);
+//  $stmt->bindParam(':nom', $nom);
+//  $stmt->bindParam(':email', $email);
+//  $stmt->bindParam(':telephone', $telephone);
+//  $stmt->bindParam(':adresse', $adresse);
+//  $stmt->bindParam(':prenom', $prenom);
+//  $stmt->bindParam(':datnais', $datnais);
 
- $result = $stmt->execute();
+//  $result = $stmt->execute();
 
- $msg = [
-  "message" => "modification reussi",
-  "status" => "200"
- ];
+//  $msg = [
+//   "message" => "modification reussi",
+//   "status" => "200"
+//  ];
 
- $db = null;
-echo "Update successful! ";
- $response->getBody()->write(json_encode($msg));
- return $response
-   ->withHeader('content-type', 'application/json')
-   ->withStatus(200);
-} catch (PDOException $e) {
- $error = array(
-   "message" => $e->getMessage()
- );
+//  $db = null;
+// echo "Update successful! ";
+//  $response->getBody()->write(json_encode($msg));
+//  return $response
+//    ->withHeader('content-type', 'application/json')
+//    ->withStatus(200);
+// } catch (PDOException $e) {
+//  $error = array(
+//    "message" => $e->getMessage()
+//  );
 
- $response->getBody()->write(json_encode($error));
- return $response
-   ->withHeader('content-type', 'application/json')
-   ->withStatus(500);
-}
-});
+//  $response->getBody()->write(json_encode($error));
+//  return $response
+//    ->withHeader('content-type', 'application/json')
+//    ->withStatus(500);
+// }
+// });
 
 
 // SUPPRIMER UN GESTIONNAIRE 
-$app->delete('/gestionnaire/delete/{id_gest}', function (Request $request, Response $response, array $args) {
-  $id = $args["id_gest"];
-  $sql = "DELETE FROM gestionnaire WHERE id_gest = $id";
+// $app->delete('/gestionnaire/delete/{id_gest}', function (Request $request, Response $response, array $args) {
+//   $id = $args["id_gest"];
+//   $sql = "DELETE FROM gestionnaire WHERE id_gest = $id";
  
-  try {
-    $db = new Db();
-    $conn = $db->connect();
+//   try {
+//     $db = new Db();
+//     $conn = $db->connect();
    
-    $stmt = $conn->prepare($sql);
-    $result = $stmt->execute();
+//     $stmt = $conn->prepare($sql);
+//     $result = $stmt->execute();
  
-    $msg=[
-      "message" => "suppression effectué avec succès",
-      "status" => "200"
-    ];
+//     $msg=[
+//       "message" => "suppression effectué avec succès",
+//       "status" => "200"
+//     ];
 
-    $db = null;
-    $response->getBody()->write(json_encode($msg));
-    return $response
-      ->withHeader('content-type', 'application/json')
-      ->withStatus(200);
-  } catch (PDOException $e) {
-    $error = array(
-      "message" => $e->getMessage()
-    );
+//     $db = null;
+//     $response->getBody()->write(json_encode($msg));
+//     return $response
+//       ->withHeader('content-type', 'application/json')
+//       ->withStatus(200);
+//   } catch (PDOException $e) {
+//     $error = array(
+//       "message" => $e->getMessage()
+//     );
  
-    $response->getBody()->write(json_encode($error));
-    return $response
+//     $response->getBody()->write(json_encode($error));
+//     return $response
       
-    ->withHeader('content-type', 'application/json')
-      ->withStatus(500);
-  }
- });
+//     ->withHeader('content-type', 'application/json')
+//       ->withStatus(500);
+//   }
+//  });
 //**************************** FIN API GESTIONNAIRE ******************************************* */
 
 
@@ -479,10 +479,11 @@ $app->delete('/gestionnaire/delete/{id_gest}', function (Request $request, Respo
   $adresse = $data["adresse"];   // permet de récuperer l'adresse
   $email = $data["email"];  // permet de récuperer l'email
   $telephone = $data["telephone"];  // permet de récuperer le téléphone
+  $roles = $data["roles"];
 
   // requete pour inserer les éléments du formulaire dans la base de donnée 
  
-  $sql = "INSERT INTO users(nom, prenom, datnais, email, adresse, telephone)  VALUES (:nom, :prenom, :datnais, :email, :telephone, :adresse)";
+  $sql = "INSERT INTO users(nom, prenom, datnais, email, adresse, telephone,roles)  VALUES (:nom, :prenom, :datnais, :email, :telephone, :adresse,:roles)";
  
   try {
     $db = new Db();
@@ -495,6 +496,7 @@ $app->delete('/gestionnaire/delete/{id_gest}', function (Request $request, Respo
     $stmt->bindParam(':telephone', $telephone);
     $stmt->bindParam(':datnais', $datnais);
     $stmt->bindParam(':adresse', $adresse);
+    $stmt->bindParam(':roles', $roles);
     $result = $stmt->execute();
  
     $msg = [
@@ -531,6 +533,7 @@ $email = $data["email"];
 $telephone = $data["telephone"];
 $adresse = $data["adresse"];
 $datnais = $data["datnais"];
+$roles = $data["roles"];
 
 
 $sql = "UPDATE users SET
@@ -539,7 +542,8 @@ $sql = "UPDATE users SET
          telephone = :telephone,
          adresse = :adresse,
          prenom = :prenom,
-         datnais = :datnais
+         datnais = :datnais,
+         roles = :roles 
 WHERE id_user = $id";
 
 try {
@@ -553,6 +557,7 @@ try {
  $stmt->bindParam(':adresse', $adresse);
  $stmt->bindParam(':prenom', $prenom);
  $stmt->bindParam(':datnais', $datnais);
+ $stmt->bindParam(':roles', $roles);
 
  $result = $stmt->execute();
 
@@ -613,6 +618,8 @@ $app->delete('/users/delete/{id_user}', function (Request $request, Response $re
       ->withStatus(500);
   }
  });
+
+ 
 //**************************** FIN API USERS ******************************************* */
 
 
@@ -1055,10 +1062,13 @@ $app->get('/gare/list', function (Request $request, Response $response) {
   $nom = $data["nom"]; // permet de récuperer le nom
   $id_compagny = $data["id_compagny"];
   $id_ville = $data["id_ville"];
+  $id_user = $data["id_user"];
+
+
   
   // requete pour inserer les éléments du formulaire dans la base de donnée 
  
-  $sql = "INSERT INTO gare(nom,id_compagny,id_ville)  VALUES(:nom,:id_compagny,:id_ville)";
+  $sql = "INSERT INTO gare(nom,id_compagny,id_ville,id_user)  VALUES(:nom,:id_compagny,:id_ville,:id_user)";
  
   try {
     $db = new Db();
@@ -1068,6 +1078,7 @@ $app->get('/gare/list', function (Request $request, Response $response) {
     $stmt->bindParam(':nom', $nom);
     $stmt->bindParam(':id_compagny', $id_compagny);
     $stmt->bindParam(':id_ville', $id_ville);
+    $stmt->bindParam(':id_user', $id_user);
 
     $result = $stmt->execute();
  
@@ -1104,11 +1115,13 @@ $nom = $data["nom"];
 $id_compagny = $data["id_compagny"];
 $nom = $data["nom"];
 $id_ville = $data["id_ville"];
+$id_user = $data["id_user"];
 
 $sql = "UPDATE gare SET
          nom=:nom,
          id_compagny=:id_compagny,
          id_ville=:id_ville
+         id_user=:id_user
 WHERE id_gare=$id";
  
 
@@ -1470,7 +1483,8 @@ $app->get('/place/list', function (Request $request, Response $response) {
   
   // requete pour inserer les éléments du formulaire dans la base de donnée 
  
-  $sql = "INSERT INTO place(ranger,nbre_place,id_trajet,num_car)  VALUES (:ranger,:nbre_place,:id_trajet,:num_car)";
+  $sql = "INSERT INTO place(ranger,nbre_place,id_trajet,num_car)  
+          VALUES (:ranger,:nbre_place,:id_trajet,:num_car)";
  
   try {
     $db = new Db();
@@ -1800,48 +1814,94 @@ $app->get('/trajet/list', function (Request $request, Response $response) {
   }
  }); 
 
-//  LISTE DES TRAJETS PAR COMPAGNIE ET ORDONNEE PAR ORDRE D HEURE DE DEPART
-// $app->post('/trajet/recherchetrajet', function (Request $request, Response $response) {
-//   $data = json_decode($request->getBody()->getContents(), true); // Permet de récuperer le contenu envoye par le client
+//  LISTE DES TRAJETS PAR COMPAGNIE 
+$app->get('/trajet/recherchetrajetparcompagnie', function (Request $request, Response $response) {
+  $data = json_decode($request->getBody()->getContents(), true); // Permet de récuperer le contenu envoye par le client
   
-//   $idvilledepart = $data["idvilledepart"];
-//   $idvillearrive = $data["idvillearrive"];
-//   $idcompagnie = $data["idcompagnie"];
-//   $depart = $data["depart"];
-//   $typ_voyage = $data["typ_voyage"];
+  $typ_voyage = $data["typ_voyage"];
+  $prix = $data["prix"];
+  $date= $data["date"];
+  $duree = $data["duree"];
+  $heuredepart = $data["heuredepart"];
+  $heurearrive = $data["heurearrive"];
+  $depart = $data["depart"];
+  $destination = $data["destination"];
+  $nom = $data["nom"];
 
   
-//   // requete pour inserer les éléments du formulaire dans la base de donnée 
+  // requete pour inserer les éléments du formulaire dans la base de donnée 
  
-//   $sql = "SELECT * FROM trajet 
-//          WHERE depart=
-          
-//    VALUES (:typ_voyage,:prix,:date,:duree,:depart,:id_gare,:heuredepart,:heurearrive,:destination)";
+  $sql = "SELECT trajet.depart,trajet.destination,trajet.typ_voyage,trajet.prix,trajet.date,trajet.duree,
+                 trajet.heuredepart,trajet.heurearrive,compagnie.nom
+          FROM trajet,gare,ville,compagnie
+          WHERE trajet.id_gare=gare.id_gare
+          AND ville.id_ville=gare.id_ville
+          AND gare.id_compagny=compagnie.id_compagny";
+ 
+  try {
+    $db = new Db();
+    $conn = $db->connect();
+   
+    $stmt = $conn->prepare($sql);
+    $stmt->bindParam(':typ_voyage', $typ_voyage);
+    $stmt->bindParam(':prix', $prix);
+    $stmt->bindParam(':date', $date);
+    $stmt->bindParam(':duree', $duree);
+    $stmt->bindParam(':depart', $depart);
+    $stmt->bindParam(':heurearrive', $heurearrive);
+    $stmt->bindParam(':heuredepart', $heuredepart);
+    $stmt->bindParam(':destination', $destination);
+    $stmt->bindParam(':nom', $nom);
+
+    $result = $stmt->execute();
+ 
+    $msg = [
+      "message" => "Enregistrement reussi",
+      "status" => 200 
+    ];
+
+    $db = null;
+    $response->getBody()->write(json_encode($msg));
+    return $response
+      ->withHeader('content-type', 'application/json')
+      ->withStatus(200);
+  } catch (PDOException $e) {
+    $error = array(
+      "message" => $e->getMessage()
+    );
+ 
+    $response->getBody()->write(json_encode($error));
+    return $response
+      ->withHeader('content-type', 'application/json')
+      ->withStatus(500);
+  }
+ });
+
+
+
+
+// $app->get('/trajet/listparcompagnie/{idcompagnie}', function (Request $request, Response $response) {
+   
+//    $idcompagnie = $request->getAttribute('idcompagnie');
+   
+//   $sql = "SELECT trajet.id_trajet,trajet.prix,trajet.date,trajet.depart,trajet.typ_voyage,trajet.duree,
+//                  trajet.destination,trajet.heuredepart,trajet.heurearrive,trajet.destination,
+//                  trajet.id_gare,compagnie.nom,ville.nom
+//           FROM trajet 
+//           join gare ON trajet.id_gare = gare.id_gare
+//           join ville ON gare.id_ville = ville.id_ville
+//           join compagnie ON gare.id_compagny = compagnie.id_compagny
+//           WHERE compagnie.id_compagny = $idcompagnie
+//           ORDER BY trajet.heuredepart";
  
 //   try {
 //     $db = new Db();
 //     $conn = $db->connect();
-   
-//     $stmt = $conn->prepare($sql);
-//     $stmt->bindParam(':typ_voyage', $typ_voyage);
-//     $stmt->bindParam(':prix', $prix);
-//     $stmt->bindParam(':date', $date);
-//     $stmt->bindParam(':duree', $duree);
-//     $stmt->bindParam(':depart', $depart);
-//     $stmt->bindParam(':id_gare', $id_gare);
-//     $stmt->bindParam(':heurearrive', $heurearrive);
-//     $stmt->bindParam(':heuredepart', $heuredepart);
-//     $stmt->bindParam(':destination', $destination);
-
-//     $result = $stmt->execute();
- 
-//     $msg = [
-//       "message" => "Enregistrement reussi",
-//       "status" => 200 
-//     ];
-
+//     $stmt = $conn->query($sql);
+//     $customers = $stmt->fetchAll(PDO::FETCH_OBJ);
 //     $db = null;
-//     $response->getBody()->write(json_encode($msg));
+   
+//     $response->getBody()->write(json_encode($customers));
 //     return $response
 //       ->withHeader('content-type', 'application/json')
 //       ->withStatus(200);
@@ -1857,51 +1917,6 @@ $app->get('/trajet/list', function (Request $request, Response $response) {
 //   }
 //  });
 
-
-
-
-
-
-
-
-
-
-$app->get('/trajet/listparcompagnie/{idcompagnie}', function (Request $request, Response $response) {
-   
-   $idcompagnie = $request->getAttribute('idcompagnie');
-   
-  $sql = "SELECT trajet.id_trajet,trajet.prix,trajet.date,trajet.depart,trajet.typ_voyage,trajet.duree,
-                 trajet.destination,trajet.heuredepart,trajet.heurearrive,trajet.destination,
-                 trajet.id_gare,compagnie.nom,ville.nom
-          FROM trajet 
-          join gare ON trajet.id_gare = gare.id_gare
-          join ville ON gare.id_ville = ville.id_ville
-          join compagnie ON gare.id_compagny = compagnie.id_compagny
-          WHERE compagnie.id_compagny = $idcompagnie
-          ORDER BY trajet.heuredepart";
- 
-  try {
-    $db = new Db();
-    $conn = $db->connect();
-    $stmt = $conn->query($sql);
-    $customers = $stmt->fetchAll(PDO::FETCH_OBJ);
-    $db = null;
-   
-    $response->getBody()->write(json_encode($customers));
-    return $response
-      ->withHeader('content-type', 'application/json')
-      ->withStatus(200);
-  } catch (PDOException $e) {
-    $error = array(
-      "message" => $e->getMessage()
-    );
- 
-    $response->getBody()->write(json_encode($error));
-    return $response
-      ->withHeader('content-type', 'application/json')
-      ->withStatus(500);
-  }
- });
 
  // AJOUTER UN TRAJET
  $app->post('/trajet/add', function (Request $request, Response $response, array $args) {
